@@ -1,0 +1,217 @@
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
+CREATE TABLE "usuario" (
+  "usr_cd_id" serial  not null,
+  "usr_nm_codigo" integer not null unique,
+  "usr_tx_nome_completo" varchar(50) not null,
+  "usr_tx_endereco" varchar(250) not null,
+  "usr_nm_telefone" integer not null,
+  "usr_tx_nome_usr" varchar(50) not null,
+  "usr_tx_email" varchar(20) not null unique,
+  "usr_nm_cpf" bigint not null,
+  "usr_data_data_nasc" timestamp not null,
+  PRIMARY KEY ("usr_cd_id")
+);
+
+CREATE TABLE "categoria" (
+  "cat_cd_id" serial not null,
+  "cat_tx_nome" varchar(50) not null,
+  "cat_tx_descricao" varchar(250) not null,
+  PRIMARY KEY ("cat_cd_id")
+);
+
+CREATE TABLE "produto" (
+  "pro_cd_id" serial not null,
+  "pro_nm_codigo" integer not null unique,
+  "pro_tx_nome" varchar(50) not null,
+  "pro_tx_descricao" varchar(250) not null,
+  "pro_nm_qnt_estoque" integer not null,
+  "pro_data_data_fabricacao" timestamp DEFAULT NOW(),
+  "pro_nm_valor" decimal not null,
+  "fk_usr_cd_id" integer not null,
+  "fk_cat_cd_id" integer not null,
+  PRIMARY KEY ("pro_cd_id"),
+  CONSTRAINT "FK_produto.fk_usr_cd_id"
+    FOREIGN KEY ("fk_usr_cd_id")
+      REFERENCES "usuario"("usr_cd_id"),
+  CONSTRAINT "FK_produto.fk_cat_cd_id"
+    FOREIGN KEY ("fk_cat_cd_id")
+      REFERENCES "categoria"("cat_cd_id")
+);
+
+CREATE TABLE "pedido" (
+  "ped_cd_id" serial  not null,
+  "ped_data_data_ped" timestamp DEFAULT NOW(),
+  "fk_ped_item_cd_id" integer not null,
+  "fk_usr_cd_id" integer not null,
+  "fk_fk_usr_cd_id" integer not null,
+  CONSTRAINT chec_comprador_vendador_distintos CHECK ("fk_usr_cd_id" <> "fk_fk_usr_cd_id"),
+  PRIMARY KEY ("ped_cd_id"),
+  CONSTRAINT "FK_pedido.fk_usr_cd_id"
+    FOREIGN KEY ("fk_usr_cd_id")
+      REFERENCES "usuario"("usr_cd_id")
+);
+
+CREATE TABLE "pedido_item" (
+  "ped_item_cd_id" serial  not null,
+  "fk_ped_cd_id" integer not null,
+  "fk_pro_cd_id" integer not null,
+  PRIMARY KEY ("ped_item_cd_id"),
+  CONSTRAINT "FK_pedido_item.fk_pro_cd_id"
+    FOREIGN KEY ("fk_pro_cd_id")
+      REFERENCES "produto"("pro_cd_id")
+);
+
+
+INSERT INTO "usuario" (
+  "usr_nm_codigo",
+  "usr_tx_nome_completo",
+  "usr_tx_endereco",
+  "usr_nm_telefone",
+  "usr_tx_nome_usr",
+  "usr_tx_email",
+  "usr_nm_cpf",
+  "usr_data_data_nasc"
+) VALUES (
+	1,
+	'comprador',
+	'rua Alfonso',
+	249921122,
+	'tauk',
+	'comprador@gmail.com',
+	126004583198,
+	'2023-03-25 14:30:00'
+);
+
+INSERT INTO "usuario" (
+  "usr_nm_codigo",
+  "usr_tx_nome_completo",
+  "usr_tx_endereco",
+  "usr_nm_telefone",
+  "usr_tx_nome_usr",
+  "usr_tx_email",
+  "usr_nm_cpf",
+  "usr_data_data_nasc"
+) VALUES (
+	125,
+	'vendedor',
+	'rua Alfonso',
+	2499,
+	'tauk csaa',
+	'vendedor2@gmail.com',
+	12600542010,
+	'2023-03-25 14:30:00'
+);
+
+
+INSERT INTO "categoria" (
+	"cat_tx_nome",
+	"cat_tx_descricao"
+)
+values (
+	'roupa',
+	'muitas roupas'
+);
+
+INSERT INTO "categoria" (
+	"cat_tx_nome",
+	"cat_tx_descricao"
+)
+values (
+	'perfume',
+	'muita variedade'
+);
+
+insert into "produto" (
+	"pro_nm_codigo",
+	"pro_tx_nome",
+	"pro_tx_descricao",
+	"pro_nm_qnt_estoque",
+	"pro_nm_valor",
+	"fk_usr_cd_id",
+	"fk_cat_cd_id"
+) values (
+	1, 'calça', 'calça legal', 200, 190.90, 1, 1
+);
+insert into "produto" (
+	"pro_nm_codigo",
+	"pro_tx_nome",
+	"pro_tx_descricao",
+	"pro_nm_qnt_estoque",
+	"pro_nm_valor",
+	"fk_usr_cd_id",
+	"fk_cat_cd_id"
+) values (
+	2, 'bermuda', 'bermuda legal', 100, 79.90, 1, 1
+);
+
+insert into "produto" (
+	"pro_nm_codigo",
+	"pro_tx_nome",
+	"pro_tx_descricao",
+	"pro_nm_qnt_estoque",
+	"pro_nm_valor",
+	"fk_usr_cd_id",
+	"fk_cat_cd_id"
+) values (
+	3, 'chinelo', 'chinelo legal', 50, 19.90, 1, 1
+);
+
+insert into "produto" (
+	"pro_nm_codigo",
+	"pro_tx_nome",
+	"pro_tx_descricao",
+	"pro_nm_qnt_estoque",
+	"pro_nm_valor",
+	"fk_usr_cd_id",
+	"fk_cat_cd_id"
+) values (
+	4, 'perfume', 'perfume legal', 20, 29.90, 1, 2
+);
+
+insert into "pedido" (
+ 	"fk_ped_item_cd_id",
+ 	"fk_usr_cd_id",
+ 	"fk_fk_usr_cd_id"
+ ) values (
+	1, 1, 2	
+ );
+
+insert into "pedido_item" (
+	"fk_ped_cd_id",
+	"fk_pro_cd_id"
+) values (
+	1, 1
+);
+
+insert into "pedido_item" (
+	"fk_ped_cd_id",
+	"fk_pro_cd_id"
+) values (
+	1, 2
+);
+
+insert into "pedido_item" (
+	"fk_ped_cd_id",
+	"fk_pro_cd_id"
+) values (
+	1, 3
+);
+
+insert into "pedido_item" (
+	"fk_ped_cd_id",
+	"fk_pro_cd_id"
+) values (
+	1, 4
+);
+
+
+
+select * from pedido p;
+select * from pedido_item pi;
+
+
+
+
+
